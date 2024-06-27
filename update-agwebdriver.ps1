@@ -1,4 +1,4 @@
-﻿param(
+param(
     $executablePath, #path to folder with web drivers
     [switch]$chromeDriver,
     [switch]$edgeDriver,
@@ -155,10 +155,13 @@ foreach($driver in $drivers)
                 $page = Invoke-WebRequest -UseBasicParsing -uri "https://developer.microsoft.com/en-us/microsoft-edge/tools/webdriver/"
                 foreach($link in $page.links)
                 {
-                    if($link.href.contains($edgeVersionImportant) -AND $link.href.contains("win64"))
+                    if($link.href -ne $null)
                     {
-                        $newDriver = $link.href
-                        break
+                        if($link.href.contains($browserVersionImportant) -AND $link.href.contains("win64"))
+                        {
+                            $newDriver = $link.href
+                            break
+                        }
                     }
                 }
             }
@@ -169,7 +172,7 @@ foreach($driver in $drivers)
                 $break = $false
                 foreach($update in $chromeUpdateJson.versions)
                 {
-                    if($update.version.contains($chromeVersionImportant))
+                    if($update.version.contains($browserVersionImportant))
                     {
                         foreach($option in $update.downloads.chromedriver)
                         {
