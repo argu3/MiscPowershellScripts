@@ -13,3 +13,7 @@ uninstall-anyProgram.ps1: Finds all installed programs and gives an option for t
 get-AGlocalUserSIDs.ps1: Gets the SID of all users of a computer based on users folder
 
 change-AGFolderDateModified.ps1: updates the "date modified" of a folder to reflect the latest update date of the files within
+
+Get-AGWinEvent.ps1: a wrapper for Get-WinEvent which gives the EventData (as viewed in the Event Viewer) in a convenient format
+
+Get-AGCommandletWrapper.ps1: generates a file which accepts the same parameters as a commandlet and returns the output of that commandlet. Basically a template for making a standardized modification of either param inputs or outputs
