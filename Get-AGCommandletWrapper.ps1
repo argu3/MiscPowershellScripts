@@ -1,10 +1,11 @@
 param(
-    $cmdletName,
     [switch]$toFile,
     [switch]$filterParams,
     $filteredParameters = @(),
     $filePath,
-    $cmdletNameModifierString = "Custom"
+    $cmdletNameModifierString = "Custom",
+    [Parameter(Mandatory)]    
+    $cmdletName
 )
 $helpInfo = get-help $cmdletName -Detailed
 if($helpInfo.count -gt 1)
