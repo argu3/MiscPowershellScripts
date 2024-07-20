@@ -1,7 +1,9 @@
-﻿param(
+param(
     $cmdletName,
     [switch]$toFile,
-    [switch]$filterNullParams,
+    [switch]$filterParams,
+    $filteredParameters = @(),
+    $filePath,
     $cmdletNameModifierString = "Custom"
 )
 $helpInfo = get-help $cmdletName -Detailed
@@ -12,41 +14,38 @@ if($helpInfo.count -gt 1)
 }
 #else
 $paramNames = $helpInfo.parameters.parameter.name
-$paramBlock = @("param(")
-$paramBlock += $paramNames.ForEach({"`t$" + $_ + ","})
-$paramBlock[$paramBlock.Count - 1] = $paramBlock[$paramBlock.Count - 1].Replace(",","")
-$paramBlock += ")"
-if($filterNullParams)
+$script = @("param(")
+$script += $paramNames.ForEach({"`t$" + $_ + ","})
+$script[$script.Count - 1] = $script[$script.Count - 1].Replace(",","")
+$script += ")"
+if($filterParams)
 {
-    $paramBlock += "`$params = @{}
+    $script += "`$filteredParameters = @("
+    $script += $filteredParameters.ForEach({"`t'" + $_ + "',"})
+    $script[$script.Count - 1] = $script[$script.Count - 1].Replace(",","")
+    $script += ")"
+    $script += "`$params = @{}
 foreach(`$key in `$PSBoundParameters.keys)
 {
-    if(`$PSBoundParameters[`$key] -ne `$null)
+    if(!`$filteredParameters.Contains(`$key))
     {
         `$params[`$key] = `$PSBoundParameters[`$key]
     }
 }
-if(`$params.count -eq 0)
-{
-    `$output = $cmdletName @params
-}
-else
-{
-    `$output = $cmdletName
-}
+`$output = $cmdletName @params
 "
 }
 else
 {
-    $paramBlock += "`$output=@PSBoundParameters"
+    $script += "`$output= $cmdletName @PSBoundParameters"
 }
 if($toFile)
 {
     $cmdletNameModifierString = "-" + $cmdletNameModifierString
-    $fileName = $cmdletName.Replace("-",$cmdletNameModifierString) + ".ps1"
-    $paramBlock | Out-File $fileName
+    $fileName = $filePath + $cmdletName.Replace("-",$cmdletNameModifierString) + ".ps1"
+    $script | Out-File $fileName
 }
 else
 {
-    $paramBlock
+    $script
 }
