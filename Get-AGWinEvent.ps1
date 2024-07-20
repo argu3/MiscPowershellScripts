@@ -1,4 +1,4 @@
-﻿param(
+param(
     #Get-Winevent parameters
     $ComputerName,
     $Credential,
@@ -26,18 +26,18 @@
 )
 
 #check for valid parameters
+$filteredParameters = @(
+	'asPair'
+)
 $params = @{}
 foreach($key in $PSBoundParameters.keys)
 {
-    if($PSBoundParameters[$key] -ne $null -AND $key -ne "asPair")
+    if(!$filteredParameters.Contains($key))
     {
         $params[$key] = $PSBoundParameters[$key]
     }
 }
-if($params.count -ne 0)
-{
-    $eventList = Get-WinEvent @params
-}
+$eventList = Get-WinEvent @params
 
 #process EventData
 $newEventList = @()
