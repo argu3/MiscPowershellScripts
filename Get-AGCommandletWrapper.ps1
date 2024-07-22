@@ -11,7 +11,7 @@ $helpInfo = get-help $cmdletName -Detailed
 if($helpInfo.count -gt 1)
 {
     write-host "Multiple results returned" -BackgroundColor Red
-    break
+    return
 }
 #else
 $paramNames = $helpInfo.parameters.parameter.name
